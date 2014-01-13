@@ -8,17 +8,33 @@
 </head>
 <body class='<%= controller.controller_name %>'>
 	<div id="banner">
+		<%= form_tag store_path, class:'locale' do %>
+		  <%= select_tag 'set_locale',options_for_select(LANGUAGES,I18n.locale.to_s),onchange: 'this.form.submit()' %>
+		  <%= submit_tag 'submit' %>
+		  <%= javascript_tag "$('.locale input').hide()" %>
+		<% end %>
 		<%= image_tag("logo.png") %>
-		<%= @page_title || "Pragmatic Bookshelf" %>
+		<%= @page_title || t('.title') %>
 	</div>
 	<div id="columns">
 		<div id="side">
+			<%= hidden_div_if(@cart.line_items.empty?, id:'cart') do %>
+				<%= render @cart %>
+			<% end if @cart %>
 			<ul>
-				<li><%= link_to "Home","#" %></li>
-				<li><%= link_to "Questions","#" %></li>
-				<li><%= link_to "News","#" %></li>
-				<li><%= link_to "Contact","#" %></li>
+				<li><%= link_to t('.home'),"#" %></li>
+				<li><%= link_to t('.question'),"#" %></li>
+				<li><%= link_to t('.news'),"#" %></li>
+				<li><%= link_to t('.contact'),"#" %></li>
 			</ul>
+			<% if session[:user_id] %>
+				<ul>
+					<li><%= link_to 'Orders', orders_path %></li>
+					<li><%= link_to 'Products', products_path %></li>
+					<li><%= link_to 'Users',users_path %></li>
+				</ul>
+				<%= button_to 'Logout',logout_path,method: :delete %>
+			<% end %>
 		</div>
 		<div id="main">
 			<%= yield %>
